@@ -1,3 +1,12 @@
-2750
-3 4 5
-1 2 6
+3827
+13 20 8 19 9 3 2 14
+7 15 16 12 5
+6 18 4 17 10 1 11
+
+Resumo dos Resultados:
+Custo GRASP: 17977
+GAP GRASP: 373.33%
+Tempo GRASP (ms): 10028.68
+Custo GRASP + VND: 3827
+GAP GRASP + VND: 0.76%
+Tempo GRASP + VND (ms): 689.01
