@@ -274,9 +274,10 @@ def ler_entrada(nome_arquivo):
     p = list(map(int, linhas[4].split()))
     t = [list(map(int, linha.split())) for linha in linhas[5:5 + n]]
 
-    return n, num_pistas, r, c, p, t
+    valor_otimo = int(linhas[5 + n])
+    return n, num_pistas, r, c, p, t, valor_otimo
 
-def escalonar_voos_grasp(voos, t, num_pistas, alpha=0.3):
+def escalonar_voos_construcao(voos, t, num_pistas, alpha=0.3):
     pistas = [[] for _ in range(num_pistas)]
     fim_pista = [0] * num_pistas
     voos_restantes = voos[:]
@@ -408,12 +409,12 @@ def busca_local_vnd(pistas, t):
 
     return melhor
 
-def grasp_vns(voos, t, num_pistas, iteracoes=30):
+def grasp_vns(voos, t, num_pistas, iteracoes=10):
     melhor_solucao = None
     melhor_custo = float('inf')
 
     for _ in range(iteracoes):
-        pistas_iniciais = escalonar_voos_grasp(voos, t, num_pistas, alpha=0.4)
+        pistas_iniciais = escalonar_voos_construcao(voos, t, num_pistas, alpha=0.3)
         pistas_otimizadas = busca_local_vnd(pistas_iniciais, t)
         custo = calcular_custo_total(pistas_otimizadas)
 
@@ -431,7 +432,8 @@ def main():
     entrada = sys.argv[1]
     saida = sys.argv[2]
 
-    n, num_pistas, r, c, p, t = ler_entrada(entrada)
+    n, num_pistas, r, c, p, t, valor_otimo = ler_entrada(entrada)
+    # print(f"Valor ótimo: {valor_otimo}")
     voos = [Voo(id=i, r=r[i], c=c[i], p=p[i]) for i in range(n)]
 
     melhor_solucao, melhor_custo = grasp_vns(voos, t, num_pistas)
@@ -441,6 +443,7 @@ def main():
         for pista in melhor_solucao:
             ids = " ".join(str(voo.id + 1) for voo in pista)
             f.write(f"{ids}\n")
+    print("Solução encontrada e salva")
 
 if __name__ == "__main__":
     main()
