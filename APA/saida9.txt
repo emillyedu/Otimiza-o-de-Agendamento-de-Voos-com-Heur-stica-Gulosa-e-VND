@@ -1,0 +1,12 @@
+3844
+6 15 16 20 3 2 14
+7 8 19 9 12 1 11
+13 18 4 17 10 5
+
+Resumo dos Resultados:
+Custo GRASP: 38867
+GAP GRASP: 923.35%
+Tempo GRASP (ms): 33141.69
+Custo GRASP + VND: 3844
+GAP GRASP + VND: 1.21%
+Tempo GRASP + VND (ms): 2760.61
