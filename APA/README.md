@@ -33,6 +33,7 @@ t[0][0] t[0][1] ... t[0][n-1]
 t[1][0] t[1][1] ... t[1][n-1]
 ...
 t[n-1][0] ...        t[n-1][n-1]
+valor_otimo
 ```
 
 ### Onde:
@@ -42,19 +43,29 @@ t[n-1][0] ...        t[n-1][n-1]
 - `c`: lista com os tempos de duração dos pousos
 - `p`: lista com as penalidades de atraso
 - `t[i][j]`: tempo de separação obrigatório entre o voo `i` e o `j`, caso `j` venha após `i` na mesma pista
+- `valor_otimo`: valor de referência para cálculo do GAP
 
 ### Exemplo de entrada:
 ```
-5
-2
-0 2 4 3 1
-5 6 8 5 4
-10 8 6 12 9
-0 2 3 4 2
-2 0 1 3 2
-3 1 0 2 2
-4 3 2 0 1
-2 2 2 1 0
+10
+3
+
+56 15 34 61 29 50 65 12 61 31
+26 40 42 46 9 37 8 20 33 16
+57 99 80 69 77 16 82 43 23 64
+
+   0   44   43    4   35   48   26   47   13    6
+  39    0   16   24   34   15   41   24   44   41
+  29   23    0   29   44   49   16   25   26    8
+  37   46   47    0   46   19   19   20   49   50
+  19   32   31   38    0   12   34   35   17   49
+  37   31   36    4   40    0   47   45    4   43
+  14   37   35   33    5    7    0   11   36   31
+   2   37   22   10    1   19   42    0   27   49
+  38   46   49   26   33   32   33   17    0   18
+  23   16   44   48   30   46    7   50    7    0
+
+7483
 ```
 
 ---
@@ -89,13 +100,32 @@ A saída é gravada em um arquivo `.txt` com o seguinte formato:
 <lista_de_voos_na_pista_1>
 ...
 <lista_de_voos_na_pista_m-1>
+...
+Resumo dos Resultados:
+'Valor ótimo': <valor_otimo>
+'Custo GRASP': <melhor_custo_grasp>
+'GAP GRASP': <gap_grasp>
+'Tempo GRASP (ms)': <tempo_grasp>
+'Custo final + VND': <melhor_custo>
+'GAP GRASP + VND:': <gap_vnd>
+'Tempo GRASP + VND (ms)': <tempo_vnd>
 ```
 
 ### Exemplo:
 ```
-48
-1 4
-2 3 5
+7483
+8 5 1 4
+2 3
+10 7 6 9
+
+Resumo dos Resultados:
+Valor otimo: 7483
+Custo GRASP: 22246
+GAP GRASP: 197.29%
+Tempo GRASP (ms): 546.54
+Custo GRASP + VND: 7483
+GAP GRASP + VND: 0.00%
+Tempo GRASP + VND (ms): 38.51
 ```
 
 > Cada número representa o ID do voo (começando em 1).
