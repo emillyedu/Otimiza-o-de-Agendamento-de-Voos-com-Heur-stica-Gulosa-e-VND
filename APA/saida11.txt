@@ -1,0 +1,13 @@
+3827
+7 15 16 12 1 14
+13 20 8 19 9 3 2 11
+6 18 4 17 10 5
+
+Resumo dos Resultados:
+Valor ótimo: 3798Custo guloso: 26794
+GAP guloso: 605.48%
+Tempo Guloso (ms): 0.00
+Custo VND: 3827
+GAP VND: 0.76%
+Tempo VND (ms): 1050.33
+Tempo GRASP (ms): 17154.70

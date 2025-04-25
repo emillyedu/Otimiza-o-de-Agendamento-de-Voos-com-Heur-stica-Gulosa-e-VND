@@ -1,0 +1,12 @@
+3798
+6 15 16 20 10 1 14
+13 18 4 17 12 5
+7 8 19 9 3 2 11
+
+Resumo dos Resultados:
+Custo guloso: 25512
+GAP guloso: 571.72%
+Custo VND: 3798
+GAP VND: 0.00%
+Tempo VND (ms): 1305.65
+Tempo GRASP (ms): 19808.94
