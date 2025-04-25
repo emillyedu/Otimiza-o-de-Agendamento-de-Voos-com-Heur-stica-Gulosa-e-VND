@@ -170,9 +170,9 @@ def busca_local_vnd(pistas, t):
 def grasp_vns(voos, t, num_pistas, iteracoes=10):
     data_inicial_grasp = datetime.now()
 
-    melhor_solucao = None
-    melhor_custo_vnd = float('inf')
-    melhor_custo_guloso = None
+    melhor_solucao_pistas = None
+    melhor_custo = float('inf')
+    # melhor_custo_grasp = None
 
     for _ in range(iteracoes):
         # Guloso
@@ -182,15 +182,15 @@ def grasp_vns(voos, t, num_pistas, iteracoes=10):
         pistas_otimizadas, tempo_vnd = busca_local_vnd(pistas_iniciais, t)
         custo_vnd = calcular_custo_total(pistas_otimizadas)
 
-        if custo_vnd < melhor_custo_vnd:
-            melhor_solucao = pistas_otimizadas
-            melhor_custo_vnd = custo_vnd
-            melhor_custo_guloso = custo_guloso
+        if custo_vnd < melhor_custo:
+            melhor_solucao_pistas = pistas_otimizadas
+            melhor_custo = custo_vnd
+            # melhor_custo_guloso = custo_guloso
 
     data_final_grasp = datetime.now()
     tempo_grasp = (data_final_grasp - data_inicial_grasp).total_seconds()*1000
 
-    return melhor_solucao, melhor_custo_vnd, melhor_custo_guloso,tempo_grasp, tempo_vnd, tempo_guloso
+    return melhor_solucao_pistas, melhor_custo, tempo_grasp
 
 def calcular_gap(valor_heuristica, valor_otimo):
     if valor_otimo == 0:
@@ -216,38 +216,79 @@ def main():
     n, num_pistas, r, c, p, t, valor_otimo = ler_entrada(entrada)
     voos = [Voo(id=i, r=r[i], c=c[i], p=p[i]) for i in range(n)]
 
-    melhor_solucao, melhor_custo_vnd, melhor_custo_guloso, tempo_grasp, tempo_vnd, tempo_guloso = grasp_vns(voos, t, num_pistas)
+
+    #CHAMADA DO GULOSO
+    pistas_guloso, tempo_guloso = escalonar_voos_construcao(voos, t, num_pistas, alpha=0.4)
+    custo_guloso = calcular_custo_total(pistas_guloso)
+
+    # CHAMADA DO VND
+    melhor_solucao_VND, tempo_vnd = busca_local_vnd(pistas_guloso, t)
+    custo_vnd = calcular_custo_total(melhor_solucao_VND)
+
+    # CHAMADA DO  GRASP
+    melhor_solucao_pistas_grasp, melhor_custo_grasp, tempo_grasp = grasp_vns(voos, t, num_pistas)
     # melhor_solucao, melhor_custo_vnd, melhor_custo_guloso,tempo_grasp, tempo_vnd, tempo_guloso
 
-    gap_grasp = calcular_gap(melhor_custo_guloso, valor_otimo)
-    gap_vnd = calcular_gap(melhor_custo_vnd, valor_otimo)
+    gap_grasp = calcular_gap(melhor_custo_grasp, valor_otimo)
+    gap_vnd = calcular_gap(custo_vnd, valor_otimo)
+    gap_guloso = calcular_gap(custo_guloso, valor_otimo)
 
     with open(saida, 'w') as f:
-        f.write(f"{melhor_custo_vnd}\n")
-        for pista in melhor_solucao:
+        f.write(f"{melhor_custo_grasp}\n")
+        for pista in melhor_solucao_pistas_grasp:
             ids = " ".join(str(voo.id + 1) for voo in pista)
             f.write(f"{ids}\n")
         
         f.write("\nResumo dos Resultados:\n")
-        f.write(f"Valor ótimo: {valor_otimo}")
-        f.write(f"Custo guloso: {melhor_custo_guloso}\n")
-        f.write(f"GAP guloso: {gap_grasp:.2f}%\n")
+
+        f.write(f"Valor otimo: {valor_otimo}\n")
+
+        f.write(f"\nGULOSO:\n")
+        f.write(f"Alocacao de voos:{pistas_guloso}\n")
+        f.write(f"Custo guloso: {custo_guloso}\n")
+        f.write(f"GAP guloso: {gap_guloso:.2f}%\n")
         f.write(f"Tempo Guloso (ms): {tempo_guloso:.2f}\n")
-        f.write(f"Custo VND: {melhor_custo_vnd}\n")
+
+        f.write(f"______________________________________________________________\t")
+
+        f.write(f"\nVND:\n")
+        f.write(f"Alocacao de voos:{melhor_solucao_VND}\n")
+        f.write(f"Custo VND: {custo_vnd}\n")
         f.write(f"GAP VND: {gap_vnd:.2f}%\n")
         f.write(f"Tempo VND (ms): {tempo_vnd:.2f}\n")
+
+        f.write(f"______________________________________________________________\t")
+
+        f.write(f"\nGRASP:\n")
+        f.write(f"Alocacao de voos:{melhor_solucao_pistas_grasp}\n")
+        f.write(f"Custo GRASP: {melhor_custo_grasp}\n")
+        f.write(f"GAP GRASP: {gap_grasp:.2f}%\n")
         f.write(f"Tempo GRASP (ms): {tempo_grasp:.2f}\n")
 
 
-    print(f"\nResumo dos Resultados:")
-    print(f"Valor ótimo: {valor_otimo}")
-    print(f"Custo guloso: {melhor_custo_guloso}")
-    print(f"GAP guloso: {gap_grasp:.2f}%")
-    print(f"Tempo guloso (ms): {tempo_guloso:.2f}")
-    print(f"Custo VND: {melhor_custo_vnd}")
-    print(f"GAP VND: {gap_vnd:.2f}%")
-    print(f"Tempo VND (ms): {tempo_vnd:.2f}")
-    print(f"Tempo GRASP (ms): {tempo_grasp:.2f}")
+
+
+
+        # # f.write(f"Valor ótimo: {valor_otimo}")
+        # f.write(f"Custo guloso: {melhor_custo_guloso}\n")
+        # f.write(f"GAP guloso: {gap_grasp:.2f}%\n")
+        # f.write(f"Tempo Guloso (ms): {tempo_guloso:.2f}\n")
+        # f.write(f"Custo VND: {melhor_custo_vnd}\n")
+        # f.write(f"GAP VND: {gap_vnd:.2f}%\n")
+        # f.write(f"Tempo VND (ms): {tempo_vnd:.2f}\n")
+        # f.write(f"Tempo GRASP (ms): {tempo_grasp:.2f}\n")
+
+
+    print(f"\n CALCULO CONCLUÍDO, VERIFIQUE O ARQUIVO")
+    
+    # print(f"Valor ótimo: {valor_otimo}")
+    # print(f"Custo guloso: {melhor_custo_guloso}")
+    # print(f"GAP guloso: {gap_grasp:.2f}%")
+    # print(f"Tempo guloso (ms): {tempo_guloso:.2f}")
+    # print(f"Custo VND: {melhor_custo_vnd}")
+    # print(f"GAP VND: {gap_vnd:.2f}%")
+    # print(f"Tempo VND (ms): {tempo_vnd:.2f}")
+    # print(f"Tempo GRASP (ms): {tempo_grasp:.2f}")
 
 
 if __name__ == "__main__":
